@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Uninstall Multiversion and related modules.
+ */
+function HOOK_update_8000() {
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->install(['multiversion_remover']);
+
+  $entity_type_ids_requiring_manual_removal = [
+    'node',
+    'comment',
+  ];
+
+  // Exception should bubble-up to rollback update.
+  // @codingStandardsIgnoreLine
+  /** @noinspection PhpUnhandledExceptionInspection */
+  multiversion_remover_execute($entity_type_ids_requiring_manual_removal);
+}
+
+/**
+ * Uninstalls the Multiversion Remover module (no longer needed).
+ */
+function HOOK_update_8001() {
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->uninstall(['multiversion_remover']);
+}
